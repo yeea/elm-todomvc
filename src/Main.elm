@@ -27,7 +27,7 @@ main : Program (Maybe Model) Model Msg
 main =
     Browser.document
         { init = init
-        , view = \model -> { title = "Elm • TodoMVC", body = [view model] }
+        , view = \model -> { title = "Elm - Todo List", body = [view model] }
         , update = updateWithStorage
         , subscriptions = \_ -> Sub.none
         }
@@ -231,7 +231,7 @@ viewInput : String -> Html Msg
 viewInput task =
     header
         [ class "header" ]
-        [ h1 [] [ text "todos" ]
+        [ h1 [] [ text "TODOs" ]
         , input
             [ class "new-todo"
             , placeholder "What needs to be done?"
