@@ -23,16 +23,19 @@ import Json.Decode as Json
 import Task
 
 
-main : Program (Maybe Model) Model Msg
+main : Program (Maybe Model) Model Msg --core module: handles args that may or may not appear
 main =
     Browser.document
         { init = init
         , view = \model -> { title = "Elm - Todo List", body = [view model] }
+        -- anon fcn view takes a model with the title etc defn
         , update = updateWithStorage
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = \_ -> Sub.none --may or may not have subs
         }
 
 
+-- how elm talks to JS things, JS runtime is like an external service
+-- all things coming in have to be typed
 port setStorage : Model -> Cmd msg
 
 
@@ -55,6 +58,7 @@ updateWithStorage msg model =
 
 
 -- The full application state of our todo app.
+-- below: a new line in the TODO list
 type alias Model =
     { entries : List Entry
     , field : String
@@ -62,7 +66,7 @@ type alias Model =
     , visibility : String
     }
 
-
+-- existing entries in the TODO list
 type alias Entry =
     { description : String
     , completed : Bool
@@ -71,6 +75,7 @@ type alias Entry =
     }
 
 
+-- signature + actual implementation
 emptyModel : Model
 emptyModel =
     { entries = []
@@ -88,7 +93,7 @@ newEntry desc id =
     , id = id
     }
 
-
+-- block either inits w existing model, or inits with new empty model
 init : Maybe Model -> ( Model, Cmd Msg )
 init maybeModel =
   ( Maybe.withDefault emptyModel maybeModel
@@ -104,7 +109,7 @@ init maybeModel =
 messages are fed into the `update` function as they occur, letting us react
 to them.
 -}
-type Msg
+type Msg -- message basically has all the below various states
     = NoOp
     | UpdateField String
     | EditingEntry Int Bool
@@ -125,7 +130,7 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
-        Add ->
+        Add -> -- create a new model to adhere to functional purity
             ( { model
                 | uid = model.uid + 1
                 , field = ""
@@ -133,7 +138,7 @@ update msg model =
                     if String.isEmpty model.field then
                         model.entries
                     else
-                        model.entries ++ [ newEntry model.field model.uid ]
+                        model.entries ++ [ newEntry model.field model.uid ] -- append new entry
               }
             , Cmd.none
             )
